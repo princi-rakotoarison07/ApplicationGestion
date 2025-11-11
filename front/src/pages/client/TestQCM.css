@@ -1,0 +1,43 @@
+/* Animation pour le spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Styles pour les réponses au survol */
+.reponse-label:hover {
+  background-color: #f3f4f6;
+}
+
+.reponse-label input[type="radio"]:checked + .reponse-text {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+/* Styles pour les boutons au survol */
+.start-button:hover,
+.submit-button:hover,
+.button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .test-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .info {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .progress {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

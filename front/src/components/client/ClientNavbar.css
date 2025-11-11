@@ -1,0 +1,63 @@
+/* Media queries pour la navbar client */
+
+/* Desktop - cacher le bouton mobile */
+@media (min-width: 769px) {
+  .mobile-menu-button {
+    display: none !important;
+  }
+  
+  .mobile-menu {
+    display: none !important;
+  }
+}
+
+/* Mobile - cacher le menu desktop et les boutons auth */
+@media (max-width: 768px) {
+  .desktop-menu {
+    display: none !important;
+  }
+  
+  .right-section {
+    display: none !important;
+  }
+  
+  .mobile-menu-button {
+    display: block !important;
+  }
+}
+
+/* Styles pour les effets hover */
+.login-button:hover {
+  background-color: #1e3a8a;
+  color: #ffffff;
+}
+
+.signup-button:hover {
+  background-color: #1e40af;
+}
+
+.logout-button:hover {
+  background-color: #dc2626;
+}
+
+.menu-item:hover {
+  background-color: #f3f4f6;
+  color: #1e3a8a;
+}
+
+.mobile-login-button:hover {
+  background-color: #1e3a8a;
+  color: #ffffff;
+}
+
+.mobile-signup-button:hover {
+  background-color: #1e40af;
+}
+
+.mobile-logout-button:hover {
+  background-color: #dc2626;
+}
+
+.mark-all-button:hover {
+  background-color: #e5e7eb;
+}

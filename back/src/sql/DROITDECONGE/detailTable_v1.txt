@@ -1,0 +1,39 @@
+Structure organisée en 4 groupes :
+
+Tables de référence (7 tables)
+
+CategoriePersonnel - Ouvrier, Employé, TAM, Cadre, Dirigeant
+PeriodeExercice - Exercices annuels
+JourFerie - Jours fériés et chômés
+TypeConge - Types de congés
+ParametreTypeConge - Paramètres détaillés par type
+RegleAcquisition - Règles d'acquisition des droits
+
+
+Gestion des soldes (2 tables)
+
+SoldeConge - Soldes par employé/type/période
+MouvementSolde - Traçabilité complète des mouvements
+
+
+Gestion des demandes (3 tables)
+
+DemandeConge - Demandes de congés
+PieceJustificative - Documents justificatifs
+ValidationConge - Workflow de validation
+
+
+Historique et alertes (2 tables)
+
+HistoriqueDemandeConge - Audit trail complet
+AlerteConge - Système d'alertes
+
+
+
+🔍 5 Vues métier optimisées
+
+Soldes actuels avec calculs
+Demandes en attente
+Calendrier des absences
+Statistiques par département
+Alertes actives
