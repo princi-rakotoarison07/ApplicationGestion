@@ -1,0 +1,22 @@
+Employe
+  ├─→ CategoriePersonnel (Ouvrier, Employé, TAM, Cadre, Dirigeant)
+  ├─→ ClassificationSalariale (HC, 5B, 4A, etc.)
+  └─→ Departement
+
+//JEREO AO AM EXCEL INY
+PeriodePaie (mensuelle)
+  └─→ FichePaie (par employé)
+        └─→ ElementPaie (détail des éléments)
+              └─→ TypeElementPaie (gains, retenues, indemnités)
+
+FichePaie calcule :
+  ├─ Salaire brut (base + primes + HS)
+  ├─ Cotisations (CNAPS + OSTIE via ParametreCotisation)
+  ├─ IRSA (via TrancheIRSA progressif)
+  └─ Net à payer
+
+DemandeConge
+  ├─ Impact sur FichePaie.retenueAbsences
+  └─ Lien avec PlanningConge
+
+  
