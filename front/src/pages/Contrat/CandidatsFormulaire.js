@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { FiSave } from 'react-icons/fi';
 
@@ -11,14 +12,53 @@ const CandidatsFormulaire = () => {
     dateDebut: '',
     nombreMois: '',
     typeContrat: 'Essai',
+    periodeEssaiMois: '',
+    salaire: '',
+    poste: '',
+    commentaire: '',
+    estRenouvele: false,
   });
+
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
   };
+
+  const computedDateFin = useMemo(() => {
+    try {
+      if (!formData.dateDebut) return '';
+      const months = parseInt(formData.nombreMois, 10);
+      if (!months || months <= 0) return '';
+      const d = new Date(formData.dateDebut);
+      d.setMonth(d.getMonth() + months);
+      // Format YYYY-MM-DD
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    } catch {
+      return '';
+    }
+  }, [formData.dateDebut, formData.nombreMois]);
+
+  const computedDateFinEssai = useMemo(() => {
+    try {
+      if (!formData.dateDebut) return '';
+      const months = parseInt(formData.periodeEssaiMois, 10);
+      if (!months || months <= 0) return '';
+      const d = new Date(formData.dateDebut);
+      d.setMonth(d.getMonth() + months);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    } catch {
+      return '';
+    }
+  }, [formData.dateDebut, formData.periodeEssaiMois]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +73,12 @@ const CandidatsFormulaire = () => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          // Envoyer les dates calculées côté client à titre indicatif; le serveur recalcule aussi
+          dateFin: computedDateFin || null,
+          dateFinEssai: computedDateFinEssai || null,
+        }),
       });
 
       if (!response.ok) {
@@ -42,8 +87,8 @@ const CandidatsFormulaire = () => {
 
       const data = await response.json();
       if (data.success) {
-        alert('Contrat d\'essai ajouté avec succès !');
-        navigate('/candidats');
+        alert('Contrat ajouté avec succès !');
+        navigate('/contrats');
       } else {
         throw new Error(data.message || 'Erreur lors de la création');
       }
@@ -59,17 +104,17 @@ const CandidatsFormulaire = () => {
       {/* Header Section */}
       <div style={styles.header}>
         <div style={styles.headerContent}>
-          <h1 style={styles.title}>Ajouter un Contrat d'Essai</h1>
+          <h1 style={styles.title}>Ajouter un Contrat</h1>
           <p style={styles.subtitle}>
-            {location.state?.candidatNom && location.state?.candidatPrenom ? (
+            {location.state?.employeNom && location.state?.employePrenom ? (
               <>
-                Candidat: <strong>{location.state.candidatPrenom} {location.state.candidatNom}</strong>
+                Employé: <strong>{location.state.employePrenom} {location.state.employeNom}</strong>
                 {location.state?.annonceReference && (
                   <> • Annonce: <strong>{location.state.annonceReference}</strong></>
                 )}
               </>
             ) : (
-              `Remplissez les détails du contrat pour le candidat ID: ${id}`
+              `Remplissez les détails du contrat pour l'employé ID: ${id}`
             )}
           </p>
         </div>
@@ -102,6 +147,12 @@ const CandidatsFormulaire = () => {
               style={styles.input}
             />
           </div>
+          {computedDateFin && (
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Date de fin (calculée) :</label>
+              <input type="text" value={computedDateFin} readOnly style={styles.inputReadOnly} />
+            </div>
+          )}
           <div style={styles.formGroup}>
             <label style={styles.label}>Type de contrat :</label>
             <select
@@ -115,6 +166,77 @@ const CandidatsFormulaire = () => {
               <option value="CDI">CDI</option>
               <option value="CDD">CDD</option>
             </select>
+          </div>
+          {formData.typeContrat === 'Essai' && (
+            <>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Période d'essai (mois) :</label>
+                <input
+                  type="number"
+                  name="periodeEssaiMois"
+                  value={formData.periodeEssaiMois}
+                  onChange={handleChange}
+                  min="1"
+                  required
+                  style={styles.input}
+                />
+              </div>
+              {computedDateFinEssai && (
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Fin d'essai (calculée) :</label>
+                  <input type="text" value={computedDateFinEssai} readOnly style={styles.inputReadOnly} />
+                </div>
+              )}
+            </>
+          )}
+
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Poste :</label>
+            <input
+              type="text"
+              name="poste"
+              value={formData.poste}
+              onChange={handleChange}
+              placeholder="Ex: Développeur Full-Stack"
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Salaire :</label>
+            <input
+              type="number"
+              name="salaire"
+              value={formData.salaire}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              placeholder="Ex: 1200.00"
+              style={styles.input}
+            />
+          </div>
+
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Commentaire :</label>
+            <textarea
+              name="commentaire"
+              value={formData.commentaire}
+              onChange={handleChange}
+              rows={3}
+              style={styles.textarea}
+              placeholder="Notes sur le contrat..."
+            />
+          </div>
+
+          <div style={{...styles.formGroup, flexDirection: 'row', alignItems: 'center', gap: '8px'}}>
+            <input
+              type="checkbox"
+              id="estRenouvele"
+              name="estRenouvele"
+              checked={formData.estRenouvele}
+              onChange={handleChange}
+            />
+            <label htmlFor="estRenouvele" style={styles.label}>Renouvelable</label>
           </div>
           <button
             type="submit"

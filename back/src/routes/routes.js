@@ -15,6 +15,8 @@ const EntretienController = require('../controllers/entretienController');
 const CompteCandidatController = require('../controllers/compteCandidatController');
 const NotificationController = require('../controllers/notificationController');
 const NotificationCandidatController = require('../controllers/notificationCandidatController');
+const PaieController = require('../controllers/paieController');
+const ParametrePaieController = require('../controllers/parametrePaieController');
 
 // Routes d'authentification
 router.post('/auth/inscription', AuthController.inscription);
@@ -185,6 +187,16 @@ router.put('/candidats/notifications/:id/lue', CompteCandidatController.verifier
 // Routes temporaires pour notifications (sans authentification)
 router.get('/candidats/notifications/simple', NotificationCandidatController.obtenirNotificationsSimple);
 router.put('/candidats/notifications/:id/lue/simple', NotificationCandidatController.marquerCommeLueSimple);
+
+// Routes Paie (protégées)
+router.get('/paie/employes/:id/calcul', AuthController.verifierToken, PaieController.calculerFichePaie);
+
+// Paramétrage Paie (protégées)
+router.get('/paie/parametres', AuthController.verifierToken, ParametrePaieController.getAll);
+router.get('/paie/parametres/:id', AuthController.verifierToken, ParametrePaieController.getById);
+router.post('/paie/parametres', AuthController.verifierToken, ParametrePaieController.create);
+router.put('/paie/parametres/:id', AuthController.verifierToken, ParametrePaieController.update);
+router.put('/paie/parametres/:id/actif', AuthController.verifierToken, ParametrePaieController.toggleActif);
 
 // Routes de debug pour notifications
 router.get('/candidats/notifications/debug', NotificationCandidatController.debugNotifications);

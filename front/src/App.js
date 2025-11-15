@@ -26,6 +26,10 @@ import CandidatsFormulaire from './pages/Contrat/CandidatsFormulaire';
 import ListeContrats from './pages/Contrat/ListeContrats';
 import DetailsCandidatContrat from './pages/Contrat/DetailsCandidatContrat';
 import Employes from './pages/employe/Employes';
+import FichePaie from './pages/paie/FichePaie';
+import GestionPresences from './pages/paie/GestionPresences';
+import GestionAvances from './pages/paie/GestionAvances';
+import ParametresPaie from './pages/paie/ParametresPaie';
 
 
 function App() {
@@ -111,6 +115,10 @@ function App() {
                     <Route path="/contrats" element={<ListeContrats />}/>
                     <Route path="/contrats/details/:id" element={<DetailsCandidatContrat />} />
                     <Route path="/employes" element={<Employes />} />
+                    <Route path="/paie/employe/:id" element={<FichePaie />} />
+                    <Route path="/presences/employe/:id" element={<GestionPresences />} />
+                    <Route path="/avances/employe/:id" element={<GestionAvances />} />
+                    <Route path="/paie/parametres" element={<ParametresPaie />} />
                   </Routes> 
                 </div>
               </>

@@ -109,12 +109,20 @@ const Employes = () => {
                     <td style={styles.td}>{e.adresse || '—'}</td>
                     <td style={{...styles.td, textAlign: 'right'}}>{e.id}</td>
                     <td style={{...styles.td, textAlign: 'right'}}>
-                      <button
-                        style={styles.primaryBtn}
-                        onClick={() => navigate(`/contrats/ajouter/${e.id}`, { state: { candidatNom: e.nom, candidatPrenom: e.prenom } })}
-                      >
-                        Créer contrat
-                      </button>
+                      <div style={{display:'inline-flex', gap:8}}>
+                        <button
+                          style={styles.secondaryBtn}
+                          onClick={() => navigate(`/paie/employe/${e.id}`)}
+                        >
+                          Voir paie
+                        </button>
+                        <button
+                          style={styles.primaryBtn}
+                          onClick={() => navigate(`/contrats/ajouter/${e.id}`, { state: { employeNom: e.nom, employePrenom: e.prenom } })}
+                        >
+                          Créer contrat
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -244,6 +252,16 @@ styles.primaryBtn = {
   backgroundColor: '#1e40af',
   color: '#fff',
   border: 'none',
+  borderRadius: 8,
+  padding: '8px 12px',
+  cursor: 'pointer',
+  fontSize: 13
+};
+
+styles.secondaryBtn = {
+  backgroundColor: 'transparent',
+  color: '#1e40af',
+  border: '1px solid #1e40af',
   borderRadius: 8,
   padding: '8px 12px',
   cursor: 'pointer',

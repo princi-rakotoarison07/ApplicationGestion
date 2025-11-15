@@ -15,18 +15,69 @@ class CandidatsService {
     }
 
       static async ajouterContrat(contratData) {
-        try {
-            const { idEmploye, dateDebut, nombreMois, typeContrat } = contratData;
-            const [result] = await pool.execute(
-                'INSERT INTO Contrat (idEmploye, dateDebut, nombreMois, typeContrat) VALUES (?, ?, ?, ?)',
-                [idEmploye, dateDebut, nombreMois, typeContrat]
-            );
-            return { id: result.insertId, ...contratData };
+    try {
+      const {
+        idEmploye,
+        typeContrat,
+        dateDebut,
+        dateFin: dateFinInput,
+        nombreMois,
+        periodeEssaiMois,
+        dateFinEssai: dateFinEssaiInput,
+        salaire,
+        poste,
+        estRenouvele,
+        commentaire,
+      } = contratData;
+
+      // Calcule dateFin si non fournie mais nombreMois présent
+      let dateFin = dateFinInput || null;
+      if (!dateFin && dateDebut && nombreMois) {
+        const d = new Date(dateDebut);
+        d.setMonth(d.getMonth() + parseInt(nombreMois, 10));
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        dateFin = `${y}-${m}-${day}`;
+      }
+
+      // Calcule dateFinEssai si non fournie mais periodeEssaiMois présent
+      let dateFinEssai = dateFinEssaiInput || null;
+      if (!dateFinEssai && dateDebut && periodeEssaiMois) {
+        const d = new Date(dateDebut);
+        d.setMonth(d.getMonth() + parseInt(periodeEssaiMois, 10));
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        dateFinEssai = `${y}-${m}-${day}`;
+      }
+
+      const [result] = await pool.execute(
+        `INSERT INTO Contrat (
+          idEmploye, typeContrat, dateDebut, dateFin, nombreMois,
+          periodeEssaiMois, dateFinEssai, salaire, poste, estRenouvele, commentaire
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          idEmploye,
+          typeContrat,
+          dateDebut,
+          dateFin,
+          nombreMois || null,
+          periodeEssaiMois || null,
+          dateFinEssai,
+          salaire || null,
+          poste || null,
+          !!estRenouvele,
+          commentaire || null,
+        ]
+      );
+      return { id: result.insertId, ...contratData, dateFin, dateFinEssai };
     } catch (error) {
-        console.error('Erreur lors de l\'ajout du contrat:', error.message, error.stack);
-        throw error;
+      console.error('Erreur lors de l\'ajout du contrat:', error.message, error.stack);
+      throw error;
     }
   }
+
       static async obtenirCandidatParId(id) {
         try {
         const [rows] = await pool.execute('SELECT * FROM Candidat WHERE id = ?', [id]);
