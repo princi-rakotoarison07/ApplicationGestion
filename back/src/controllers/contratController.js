@@ -83,11 +83,43 @@ class ContratController {
       const contratData = req.body;
       
       // Validation des données requises
-      const { idEmploye, dateDebut, nombreMois, typeContrat } = contratData;
-      if (!idEmploye || !dateDebut || !nombreMois || !typeContrat) {
+      const { idEmploye, dateDebut, typeContrat } = contratData;
+      if (!idEmploye || !dateDebut || !typeContrat) {
         return res.status(400).json({
           success: false,
-          message: "Tous les champs sont requis (idEmploye, dateDebut, nombreMois, typeContrat)"
+          message: "Les champs idEmploye, dateDebut et typeContrat sont requis"
+        });
+      }
+      
+      // Validation spécifique selon le type de contrat
+      if (typeContrat !== 'CDI' && (!contratData.nombreMois || contratData.nombreMois === '0')) {
+        return res.status(400).json({
+          success: false,
+          message: "Le champ nombreMois est requis pour les contrats autres que CDI"
+        });
+      }
+      
+      // Validation du salaire minimum (SMIG Madagascar)
+      const SMIG_MADAGASCAR = 200000; // 200,000 Ar (à ajuster selon la réglementation)
+      if (contratData.salaire && contratData.salaire < SMIG_MADAGASCAR) {
+        return res.status(400).json({
+          success: false,
+          message: `Le salaire ne peut pas être inférieur au SMIG (${SMIG_MADAGASCAR} Ar)`
+        });
+      }
+      
+      // Validation des durées maximales selon le type
+      if (typeContrat === 'Stage' && contratData.nombreMois > 6) {
+        return res.status(400).json({
+          success: false,
+          message: "La durée d'un stage ne peut pas dépasser 6 mois"
+        });
+      }
+      
+      if (typeContrat === 'Intérim' && contratData.nombreMois > 18) {
+        return res.status(400).json({
+          success: false,
+          message: "La durée d'un contrat intérim ne peut pas dépasser 18 mois"
         });
       }
 

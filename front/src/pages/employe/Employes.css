@@ -315,8 +315,23 @@
 }
 
 .badge.contract-stage {
-  background-color: #f1f5f9;
-  color: #475569;
+  background-color: #f59e0b;
+  color: white;
+}
+
+.badge.contract-interim {
+  background-color: #8b5cf6;
+  color: white;
+}
+
+.badge.contract-apprentissage {
+  background-color: #06b6d4;
+  color: white;
+}
+
+.badge.status-unknown {
+  background-color: #6b7280;
+  color: white;
 }
 
 /* Modal */

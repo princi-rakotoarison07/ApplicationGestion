@@ -16,7 +16,11 @@ const Employes = () => {
     idEmploye: '',
     dateDebut: '',
     nombreMois: '',
-    typeContrat: 'CDD'
+    typeContrat: 'CDD',
+    salaire: '',
+    poste: '',
+    periodeEssaiMois: '',
+    commentaire: ''
   });
 
   // Charger les données
@@ -35,7 +39,7 @@ const Employes = () => {
       });
       const dataEmployes = await responseEmployes.json();
       
-      // Charger les contrats
+      // Charger les contrats avec informations employé
       const responseContrats = await fetch('/api/contrats', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -48,7 +52,22 @@ const Employes = () => {
       const dataStats = await responseStats.json();
 
       if (dataEmployes.success) setEmployes(dataEmployes.data);
-      if (dataContrats.success) setContrats(dataContrats.data);
+      if (dataContrats.success) {
+        // Enrichir les contrats avec les informations employé si nécessaire
+        const contratsEnrichis = dataContrats.data.map(contrat => {
+          if (!contrat.nom || !contrat.prenom) {
+            const employe = dataEmployes.data?.find(e => e.id === contrat.idEmploye);
+            return {
+              ...contrat,
+              nom: employe?.nom || 'Nom inconnu',
+              prenom: employe?.prenom || '',
+              nomDepartement: employe?.nomDepartement || 'Département non assigné'
+            };
+          }
+          return contrat;
+        });
+        setContrats(contratsEnrichis);
+      }
       if (dataStats.success) setStatistiques(dataStats.data);
       
     } catch (error) {
@@ -68,14 +87,22 @@ const Employes = () => {
         idEmploye: employe.id,
         dateDebut: new Date().toISOString().split('T')[0],
         nombreMois: '12',
-        typeContrat: 'CDD'
+        typeContrat: 'CDD',
+        salaire: '',
+        poste: '',
+        periodeEssaiMois: '',
+        commentaire: ''
       });
     } else if (type === 'renouveler' && contrat) {
       setFormData({
         idEmploye: contrat.idEmploye,
-        dateDebut: contrat.dateFin,
-        nombreMois: contrat.nombreMois.toString(),
-        typeContrat: contrat.typeContrat
+        dateDebut: contrat.dateFin || new Date().toISOString().split('T')[0],
+        nombreMois: contrat.nombreMois?.toString() || '12',
+        typeContrat: contrat.typeContrat,
+        salaire: contrat.salaire || '',
+        poste: contrat.poste || '',
+        periodeEssaiMois: contrat.periodeEssaiMois?.toString() || '',
+        commentaire: contrat.commentaire || ''
       });
     }
     
@@ -89,7 +116,11 @@ const Employes = () => {
       idEmploye: '',
       dateDebut: '',
       nombreMois: '',
-      typeContrat: 'CDD'
+      typeContrat: 'CDD',
+      salaire: '',
+      poste: '',
+      periodeEssaiMois: '',
+      commentaire: ''
     });
   };
 
@@ -151,8 +182,9 @@ const Employes = () => {
     const classes = {
       'CDI': 'badge contract-cdi',
       'CDD': 'badge contract-cdd',
-      'Essai': 'badge contract-essai',
-      'Stage': 'badge contract-stage'
+      'Stage': 'badge contract-stage',
+      'Intérim': 'badge contract-interim',
+      'Apprentissage': 'badge contract-apprentissage'
     };
     
     return (
@@ -271,7 +303,11 @@ const Employes = () => {
               </thead>
               <tbody className="table-body">
                 {employes.map((employe) => {
-                  const contratActuel = contrats.find(c => c.idEmploye === employe.id && c.statut === 'Actif');
+                  // Trouver le contrat le plus récent de l'employé
+                  const contratsEmploye = contrats.filter(c => c.idEmploye === employe.id);
+                  const contratActuel = contratsEmploye.length > 0 
+                    ? contratsEmploye.sort((a, b) => new Date(b.dateDebut) - new Date(a.dateDebut))[0]
+                    : null;
                   
                   return (
                     <tr key={employe.id}>
@@ -347,9 +383,9 @@ const Employes = () => {
                     <td>
                       <div className="employee-info">
                         <div className="employee-name">
-                          {contrat.nom} {contrat.prenom}
+                          {contrat.nom && contrat.prenom ? `${contrat.nom} ${contrat.prenom}` : 'Nom non disponible'}
                         </div>
-                        <div className="employee-id">{contrat.nomDepartement}</div>
+                        <div className="employee-id">{contrat.nomDepartement || 'Département non assigné'}</div>
                       </div>
                     </td>
                     <td>
@@ -358,12 +394,19 @@ const Employes = () => {
                     <td>
                       <div className="contract-period">
                         <div className="contract-date">Du {new Date(contrat.dateDebut).toLocaleDateString('fr-FR')}</div>
-                        <div className="contract-date">Au {new Date(contrat.dateFin).toLocaleDateString('fr-FR')}</div>
+                        <div className="contract-date">
+                          {contrat.dateFin ? 
+                            `Au ${new Date(contrat.dateFin).toLocaleDateString('fr-FR')}` : 
+                            'Durée indéterminée'
+                          }
+                        </div>
                       </div>
                     </td>
-                    <td>{contrat.nombreMois} mois</td>
                     <td>
-                      {getStatutBadge(contrat.statut)}
+                      {contrat.nombreMois ? `${contrat.nombreMois} mois` : 'Indéterminée'}
+                    </td>
+                    <td>
+                      {contrat.statut ? getStatutBadge(contrat.statut) : <span className="badge status-unknown">Statut inconnu</span>}
                     </td>
                   </tr>
                 ))}
@@ -404,31 +447,101 @@ const Employes = () => {
                 />
               </div>
               
-              <div className="form-group">
-                <label className="form-label">Durée (mois)</label>
-                <input
-                  type="number"
-                  value={formData.nombreMois}
-                  onChange={(e) => setFormData({...formData, nombreMois: e.target.value})}
-                  className="form-input"
-                  min="1"
-                  required
-                />
-              </div>
+              {formData.typeContrat !== 'CDI' && (
+                <div className="form-group">
+                  <label className="form-label">
+                    Durée (mois)
+                    {formData.typeContrat === 'Stage' && ' - Max 6 mois'}
+                    {formData.typeContrat === 'Intérim' && ' - Max 18 mois'}
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.nombreMois}
+                    onChange={(e) => setFormData({...formData, nombreMois: e.target.value})}
+                    className="form-input"
+                    min="1"
+                    max={formData.typeContrat === 'Stage' ? '6' : formData.typeContrat === 'Intérim' ? '18' : ''}
+                    required
+                  />
+                </div>
+              )}
               
               <div className="form-group">
                 <label className="form-label">Type de contrat</label>
                 <select
                   value={formData.typeContrat}
-                  onChange={(e) => setFormData({...formData, typeContrat: e.target.value})}
+                  onChange={(e) => {
+                    const newType = e.target.value;
+                    setFormData({
+                      ...formData, 
+                      typeContrat: newType,
+                      // Réinitialiser nombreMois selon le type
+                      nombreMois: newType === 'CDI' ? '' : 
+                                 newType === 'Stage' ? '6' :
+                                 newType === 'Intérim' ? '3' : 
+                                 formData.nombreMois,
+                      // Réinitialiser période d'essai pour CDI
+                      periodeEssaiMois: newType === 'CDI' ? '' : formData.periodeEssaiMois
+                    });
+                  }}
                   className="form-select"
                   required
                 >
                   <option value="CDD">CDD</option>
                   <option value="CDI">CDI</option>
-                  <option value="Essai">Période d'essai</option>
                   <option value="Stage">Stage</option>
+                  <option value="Intérim">Intérim</option>
+                  <option value="Apprentissage">Apprentissage</option>
                 </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Salaire (Ar)</label>
+                <input
+                  type="number"
+                  value={formData.salaire}
+                  onChange={(e) => setFormData({...formData, salaire: e.target.value})}
+                  className="form-input"
+                  min="0"
+                  step="1000"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Poste</label>
+                <input
+                  type="text"
+                  value={formData.poste}
+                  onChange={(e) => setFormData({...formData, poste: e.target.value})}
+                  className="form-input"
+                  placeholder="Ex: Développeur, Manager, Stagiaire..."
+                />
+              </div>
+              
+              {formData.typeContrat !== 'CDI' && (
+                <div className="form-group">
+                  <label className="form-label">Période d'essai (mois)</label>
+                  <input
+                    type="number"
+                    value={formData.periodeEssaiMois}
+                    onChange={(e) => setFormData({...formData, periodeEssaiMois: e.target.value})}
+                    className="form-input"
+                    min="0"
+                    max="12"
+                    placeholder="Ex: 3 mois"
+                  />
+                </div>
+              )}
+              
+              <div className="form-group">
+                <label className="form-label">Commentaire</label>
+                <textarea
+                  value={formData.commentaire}
+                  onChange={(e) => setFormData({...formData, commentaire: e.target.value})}
+                  className="form-input"
+                  rows="3"
+                  placeholder="Commentaires ou notes sur le contrat..."
+                />
               </div>
               
               <div className="modal-actions">

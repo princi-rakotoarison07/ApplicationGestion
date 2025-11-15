@@ -23,9 +23,9 @@ router.post('/auth/connexion', AuthController.connexion);
 router.get('/auth/profil', AuthController.verifierToken, AuthController.profil);
 
 // Routes pour les employés
-router.get('/employes', EmployeController.obtenirTousLesEmployes);
-router.get('/employes/sans-compte', EmployeController.obtenirEmployesSansCompte);
-router.get('/employes/:id', EmployeController.obtenirEmployeParId);
+router.get('/employes', AuthController.verifierToken, EmployeController.obtenirTousLesEmployes);
+router.get('/employes/sans-compte', AuthController.verifierToken, EmployeController.obtenirEmployesSansCompte);
+router.get('/employes/:id', AuthController.verifierToken, EmployeController.obtenirEmployeParId);
 
 // Routes publiques pour les tests QCM (accès candidats)
 router.get('/qcm/public/tests/:id', QcmController.obtenirTestParId);
@@ -202,7 +202,6 @@ router.post('/contrats/:id/renouveler', AuthController.verifierToken, ContratCon
 
 // Routes existantes pour CandidatsController (à conserver)
 router.get('/candidats', AuthController.verifierToken, CandidatsController.obtenirTousLesCandidats);
-router.get('/employes/:id', AuthController.verifierToken, CandidatsController.obtenirEmployeParId);
 
 
 module.exports = router;
