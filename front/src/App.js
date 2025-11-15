@@ -25,6 +25,7 @@ import ListeCandidats from './pages/Contrat/ListeCandidats';
 import CandidatsFormulaire from './pages/Contrat/CandidatsFormulaire';
 import ListeContrats from './pages/Contrat/ListeContrats';
 import DetailsCandidatContrat from './pages/Contrat/DetailsCandidatContrat';
+import Employes from './pages/employe/Employes';
 
 
 function App() {
@@ -109,6 +110,7 @@ function App() {
                     <Route path="/contrats/ajouter/:id" element={<CandidatsFormulaire />} />
                     <Route path="/contrats" element={<ListeContrats />}/>
                     <Route path="/contrats/details/:id" element={<DetailsCandidatContrat />} />
+                    <Route path="/employes" element={<Employes />} />
                   </Routes> 
                 </div>
               </>

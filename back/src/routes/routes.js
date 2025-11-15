@@ -15,6 +15,7 @@ const EntretienController = require('../controllers/entretienController');
 const CompteCandidatController = require('../controllers/compteCandidatController');
 const NotificationController = require('../controllers/notificationController');
 const NotificationCandidatController = require('../controllers/notificationCandidatController');
+const ContratController = require('../controllers/contratController');
 
 // Routes d'authentification
 router.post('/auth/inscription', AuthController.inscription);
@@ -188,11 +189,20 @@ router.put('/candidats/notifications/:id/lue/simple', NotificationCandidatContro
 
 // Routes de debug pour notifications
 router.get('/candidats/notifications/debug', NotificationCandidatController.debugNotifications);
+
+// Routes pour les contrats (protégées)
+router.get('/contrats', AuthController.verifierToken, ContratController.obtenirTousLesContrats);
+router.get('/contrats/statistiques', AuthController.verifierToken, ContratController.obtenirStatistiquesContrats);
+router.get('/contrats/employe/:idEmploye', AuthController.verifierToken, ContratController.obtenirContratsParEmploye);
+router.get('/contrats/:id', AuthController.verifierToken, ContratController.obtenirContratParId);
+router.post('/contrats', AuthController.verifierToken, ContratController.creerContrat);
+router.put('/contrats/:id', AuthController.verifierToken, ContratController.mettreAJourContrat);
+router.delete('/contrats/:id', AuthController.verifierToken, ContratController.supprimerContrat);
+router.post('/contrats/:id/renouveler', AuthController.verifierToken, ContratController.renouvellerContrat);
+
+// Routes existantes pour CandidatsController (à conserver)
 router.get('/candidats', AuthController.verifierToken, CandidatsController.obtenirTousLesCandidats);
 router.get('/employes/:id', AuthController.verifierToken, CandidatsController.obtenirEmployeParId);
-router.post('/contrats', AuthController.verifierToken, CandidatsController.ajouterContrat);
-router.get('/contrats', AuthController.verifierToken, CandidatsController.obtenirTousLesContrats);
-router.get('/contrats/:id', AuthController.verifierToken, CandidatsController.obtenirContratParId);
 
 
 module.exports = router;
