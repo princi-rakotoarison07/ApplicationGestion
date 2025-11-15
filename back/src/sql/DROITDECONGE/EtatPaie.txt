@@ -1,0 +1,12 @@
+				ETAT DE PAIE  novembre 2025																															
+																																			
+																																			
+DATE	NBRE	N°MATR	N° CNAPS	  NOM et Prénoms	"  Date
+d'embauche"	  ABSENCE   du mois	CAT	Fonction	SALAIRE DE BASE	RETENUES SUR ABSCENCES	SALAIRE DE BASE DU MOIS	INDEMNITE	RAPPEL	AUTRES	HR SUP/MAJ	"Salaire 
+brut"	CNaPS 1%	CNaPs 8%	OSTIE 1%	OSTIE 5%	"Revenu
+Imposable"	"Impôt 
+dû"	 ENFANT A CHARGE 	Montant	 IGR NET 	 AUTRES RETENUES 	 TOTAL RETENUES 	 SALAIRE NET 	 AVANCE 	 NET A PAYER 	 AUTRES INDEMNITE 	NET DU MOIS			
+12-nov-25	1	002	710.922.846.807	RAZAFY ALBERT	01/01/2014		5B	Assistant Administratif et Commercial	3 000 000,00  		3 000 000,00  					3 000 000,00  	10 080,00  	80 640,00  	30 000,00  	150 000,00  	2 959 920,00  				 -     		 40 080,00   	 2 959 920,00   	 100 000,00   	 2 859 920,00   		 2 859 920,00   			
+12-nov-25	1	003	730.727.004.484	RAMAHAY GILBERT	01/03/2014		4A	Coursier Magasinier	250 000,00  		250 000,00  				 23 654,30   	273 654,30  	2 736,54  	21 892,34  	2 736,54  	13 682,72  	268 181,22  				 -     		 5 473,09   	 268 181,22   	 40 000,00   	 228 181,22   		 228 181,22   			
+12-nov-25	1	004	770.618.002.688	MANDRESY ALEXANDRE	01/12/2005		HC	Responsable Administratif et Financier	300 000,00  		300 000,00  					300 000,00  	3 000,00  	24 000,00  	3 000,00  	15 000,00  	294 000,00  				 -     		 6 000,00   	 294 000,00   		 294 000,00   		 294 000,00   			
+									 3 550 000,00   	 -     	 3 550 000,00   	 -     	 -     	 -     	 23 654,30   	 3 573 654,30   	 15 816,54   	 126 532,34   	 35 736,54   	 178 682,72   	 3 522 101,22   	 -     	 -     	 -     	 -     	 -     	 51 553,09   	 3 522 101,22   	 140 000,00   	 3 382 101,22   	 -     	 3 382 101,22   			
