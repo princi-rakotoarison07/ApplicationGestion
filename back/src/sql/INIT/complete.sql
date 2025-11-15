@@ -142,9 +142,13 @@ CREATE TABLE Contrat (
     dateDebut DATE NOT NULL,
     dateFin DATE NULL,
     nombreMois INT NULL,
+    periodeEssaiMois INT NULL,
+    dateFinEssai DATE NULL,
     salaire DECIMAL(10,2),
     poste VARCHAR(100),
     actif BOOLEAN DEFAULT TRUE,
+    estRenouvele BOOLEAN DEFAULT FALSE,
+    commentaire TEXT,
     FOREIGN KEY (idEmploye) REFERENCES Employe(id) ON DELETE CASCADE,
     INDEX idx_contrat_employe (idEmploye),
     INDEX idx_contrat_dates (dateDebut, dateFin)
